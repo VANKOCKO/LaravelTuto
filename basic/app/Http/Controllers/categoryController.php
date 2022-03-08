@@ -11,6 +11,11 @@ use Illuminate\Support\Facades\DB;
 
 class categoryController extends Controller
 {
+     /**
+      * allCat
+      *
+      * @return void
+      */
      public function allCat(){
 
            /**
@@ -37,11 +42,13 @@ class categoryController extends Controller
             [
                 'categories' => $categories
             ]);
-
-
      }
-
-
+     /**
+      * addCat
+      *
+      * @param  mixed $request
+      * @return void
+      */
      public function addCat(Request $request){
 
         $validatedData = $request->validate([
@@ -76,4 +83,38 @@ class categoryController extends Controller
         //  DB::table('categories')->insert($data);
         return Redirect()->back()->with('success','Category Inserted Successfull');
  }
+
+    /**
+     * editCat
+     *
+     * @param  mixed $id
+     * @return void
+     */
+    public function editCat($id){
+       /**
+        *  Query Builder
+        */
+       $categories = DB::table('categories')->where('id',$id)->first();
+       /**
+        *  Eloquent
+        */
+       //$categories = Category::find($id);
+       return view('admin.category.edit',[
+              'categories' => $categories
+       ]);
+    }
+
+
+    public function updateCat(Request $request, $id){
+        $update = Category::find($id)->update([
+               'category_name' => $request->category_name,
+               'user_id' => Auth::user()->id
+        ]);
+
+        return Redirect()->route('all.category')->with('success','Category Update Successfull');
+
+     }
+
+
+
 }

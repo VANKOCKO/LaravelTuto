@@ -44,11 +44,15 @@ Route::post('/category/add',
 
 
 // edit Category
-Route::post('/category/edit',
+Route::get('/category/edit/{id}',
    [
          CategoryController::class,'editCat'
     ]);
 
+    Route::post('/category/update/{id}',
+   [
+         CategoryController::class,'updateCat'
+    ]);
 
 
 /**
