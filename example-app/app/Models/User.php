@@ -7,9 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Collective\Html\Eloquent\FormAccessible;
 
 class User extends Authenticatable
 {
+    use FormAccessible;
     use HasApiTokens, HasFactory, Notifiable;
 
     /**
