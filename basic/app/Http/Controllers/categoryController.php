@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -30,6 +31,7 @@ class categoryController extends Controller
              *  Get Data with Models ORM
              */
              $categories = Category::latest()->paginate(5);
+             $trashCat = Category::onlyTrashed()->latest()->paginate(3);
             // foreach ($categories as $cat) {
             //     dd($cat->user->name);
             // }
@@ -40,7 +42,8 @@ class categoryController extends Controller
              //$categories = DB::table('categories')->latest()->paginate(5);
             return view('admin.category.index',
             [
-                'categories' => $categories
+                'categories' => $categories,
+                'trashCat' => $trashCat
             ]);
      }
      /**
@@ -105,14 +108,68 @@ class categoryController extends Controller
     }
 
 
+    /**
+     * updateCat
+     *
+     * @param  mixed $request
+     * @param  mixed $id
+     * @return void
+     */
     public function updateCat(Request $request, $id){
-        $update = Category::find($id)->update([
-               'category_name' => $request->category_name,
-               'user_id' => Auth::user()->id
-        ]);
+        /**
+         *  Eloquent
+         */
+        // $update = Category::find($id)->update([
+        //        'category_name' => $request->category_name,
+        //        'user_id' => Auth::user()->id
+        // ]);
 
+        /**
+         *  Query Builder
+         */
+        $data = Array();
+        $data['category_name'] =  $request->category_name;
+        $data['user_id'] =  Auth::user()->id;
+        DB::table('categories')->where('id',$id)->update($data);
         return Redirect()->route('all.category')->with('success','Category Update Successfull');
 
+     }
+
+     /**
+      * softDeleteCat
+      *
+      * @param  mixed $id
+      * @return void
+      */
+     public function softDeleteCat($id){
+        /**
+         *  Eloquent
+         */
+        $delete = Category::find($id)->delete();
+        return Redirect()->back()->with('success','Category Delete Successfull');
+     }
+
+
+     /**
+      * restoreCat
+      *
+      * @param  mixed $id
+      * @return void
+      */
+     public function restoreCat($id){
+           $delete = Category::withTrashed()->find($id)->restore();
+           return Redirect()->back()->with('success','Category Restore Successfull');
+     }
+
+     /**
+      * pdeleteCat
+      *
+      * @param  mixed $id
+      * @return void
+      */
+     public function pdeleteCat($id){
+        $delete = Category::onlyTrashed()->find($id)->forceDelete();
+        return Redirect()->back()->with('success','Category Permanently Deleted');
      }
 
 

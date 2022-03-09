@@ -54,6 +54,22 @@ Route::get('/category/edit/{id}',
          CategoryController::class,'updateCat'
     ]);
 
+// delete category
+
+Route::get('/softdelete/category/{id}',
+[
+      CategoryController::class,'softDeleteCat'
+ ]);
+
+ Route::get('/category/restore/{id}',
+ [
+       CategoryController::class,'restoreCat'
+  ]);
+
+  Route::get('/pdelete/category/{id}',
+  [
+        CategoryController::class,'pdeleteCat'
+   ]);
 
 /**
  *  Authentifcation Route
